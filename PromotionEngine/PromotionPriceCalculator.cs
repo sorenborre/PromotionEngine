@@ -11,7 +11,10 @@ namespace PromotionEngine
 
         public decimal CalculateTotalSkuPrice(int amount, decimal price) 
         {
-            throw new NotImplementedException();
+            if (amount < 0 || price < 0)
+                throw new NegativeNumberNotAllowedException($"One or more numbers in {nameof(CalculateTotalSkuPrice)} parameter has a negative value. amount:{amount}, price: {price}");
+
+            return amount * price;
         }
     }
 }
