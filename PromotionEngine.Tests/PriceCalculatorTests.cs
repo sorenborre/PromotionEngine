@@ -1,6 +1,4 @@
 using PromotionEngine.Models;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using Xunit;
 
@@ -8,6 +6,13 @@ namespace PromotionEngine.Tests
 {
     public class PriceCalculatorTests
     {
+        private readonly PriceCalculator _sut = new();
+
+        public PriceCalculatorTests(PriceCalculator sut)
+        {
+            _sut = sut;
+        }
+
         [Theory]
         [InlineData(1, 1, 1, 0, 100)] //Scenario A. No active promotions
         [InlineData(5, 5, 1, 0, 370)] //Scenario B. Active promotions, buy 'n' items of a SKU for a fixed price 
@@ -20,7 +25,6 @@ namespace PromotionEngine.Tests
             decimal expected)
         {
             //arange
-            PriceCalculator sut = new();
             List<StockKeepingUnitOrder> stockKeepingUnitOrders = new()
             {
                 new StockKeepingUnitOrder(new StockKeepingUnit('A', 50), amountA),
@@ -30,7 +34,7 @@ namespace PromotionEngine.Tests
             };
 
             //act
-            decimal result = sut.CalculateTotalPrice(stockKeepingUnitOrders);
+            decimal result = _sut.CalculateTotalPrice(stockKeepingUnitOrders);
 
             //assert
             Assert.Equal(expected, result);
