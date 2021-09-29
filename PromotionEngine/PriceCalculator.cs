@@ -10,35 +10,28 @@ namespace PromotionEngine
         public decimal CalculateTotalPrice(Dictionary<char, StockKeepingUnitOrder> SkuOrders, List<Promotion> promotions)
         {
             decimal result = 0;
-            bool containsKeys;
-            IEnumerable<bool> check;
-            Dictionary<char, int> counterDict = SkuOrders.ToDictionary(order => order.Key, order => order.Value.Amount);
+            Dictionary<char, int> unitOrderCounter = SkuOrders.ToDictionary(order => order.Key, order => order.Value.Amount);
 
             foreach (KeyValuePair<char, StockKeepingUnitOrder> skuOrder in SkuOrders)
             {
-                Promotion promotion = promotions.Where(p => p.RequiredProductsToTrigger.ContainsKey(skuOrder.Key)).FirstOrDefault(p => p.IsActive);
+                Promotion promotion = FindActivePromotionForOrder(promotions, skuOrder);
 
-                containsKeys = promotion.RequiredProductsToTrigger.Select(p => counterDict.ContainsKey(p.Key) && counterDict[p.Key] >= p.Value).Contains(false) == false;
-
-                if (containsKeys)
+                while (OrderContainsRequiredUnitsTotriggerPromotion(unitOrderCounter, promotion.RequiredunitsToTrigger))
                 {
-                    check = promotion.RequiredProductsToTrigger.Select(p => counterDict[p.Key] >= p.Value);
+                    result += promotion.Price;
 
-                    while (!check.Contains(false))
-                    {
-                        result += promotion.Price;
-
-                        foreach (var item in promotion.RequiredProductsToTrigger)
-                            counterDict[item.Key] -= promotion.RequiredProductsToTrigger[item.Key];
-
-                        check = promotion.RequiredProductsToTrigger.Select(p => counterDict[p.Key] >= p.Value);
-                    }
+                    foreach (var unit in promotion.RequiredunitsToTrigger)
+                        unitOrderCounter[unit.Key] -= promotion.RequiredunitsToTrigger[unit.Key];
                 }
             }
 
-            result += counterDict.Select(c => c.Value * SkuOrders[c.Key].StockKeepingUnit.Price).Sum();
-
-            return result;
+            return result += unitOrderCounter.Select(c => c.Value * SkuOrders[c.Key].StockKeepingUnit.Price).Sum();
         }
+
+        private static Promotion FindActivePromotionForOrder(List<Promotion> promotions, KeyValuePair<char, StockKeepingUnitOrder> skuOrder) =>
+            promotions.Where(p => p.RequiredunitsToTrigger.ContainsKey(skuOrder.Key)).FirstOrDefault(p => p.IsActive);
+
+        private static bool OrderContainsRequiredUnitsTotriggerPromotion(Dictionary<char, int> unitOrderCounter, Dictionary<char, int> requiredunitsToTrigger) =>
+            !requiredunitsToTrigger.Select(p => unitOrderCounter.ContainsKey(p.Key) && unitOrderCounter[p.Key] >= p.Value).Contains(false);
     }
 }
