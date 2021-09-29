@@ -8,15 +8,15 @@ namespace PromotionEngine.Models
 {
     public class Promotion
     {
-        public Promotion(bool isActive, decimal price, Dictionary<char, int> requiredProductsToTrigger)
+        public Promotion(bool isActive, decimal price, Dictionary<char, int> requiredUnitsToTrigger)
         {
             IsActive = isActive;
             Price = price;
-            RequiredProductsToTrigger = requiredProductsToTrigger;
+            RequiredUnitsToTrigger = requiredUnitsToTrigger;
         }
 
         public bool IsActive { get; set; }
         public decimal Price { get; set; }
-        public Dictionary<char, int> RequiredProductsToTrigger { get; set; }
+        public Dictionary<char, int> RequiredUnitsToTrigger { get; set; }
     }
 }

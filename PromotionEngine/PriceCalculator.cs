@@ -16,12 +16,12 @@ namespace PromotionEngine
             {
                 Promotion promotion = FindActivePromotionForOrder(promotions, skuOrder);
 
-                while (OrderContainsRequiredUnitsTotriggerPromotion(unitOrderCounter, promotion.RequiredunitsToTrigger))
+                while (OrderContainsRequiredUnitsTotriggerPromotion(unitOrderCounter, promotion.RequiredUnitsToTrigger))
                 {
                     result += promotion.Price;
 
-                    foreach (var unit in promotion.RequiredunitsToTrigger)
-                        unitOrderCounter[unit.Key] -= promotion.RequiredunitsToTrigger[unit.Key];
+                    foreach (var unit in promotion.RequiredUnitsToTrigger)
+                        unitOrderCounter[unit.Key] -= promotion.RequiredUnitsToTrigger[unit.Key];
                 }
             }
 
@@ -29,7 +29,7 @@ namespace PromotionEngine
         }
 
         private static Promotion FindActivePromotionForOrder(List<Promotion> promotions, KeyValuePair<char, StockKeepingUnitOrder> skuOrder) =>
-            promotions.Where(p => p.RequiredunitsToTrigger.ContainsKey(skuOrder.Key)).FirstOrDefault(p => p.IsActive);
+            promotions.Where(p => p.RequiredUnitsToTrigger.ContainsKey(skuOrder.Key)).FirstOrDefault(p => p.IsActive);
 
         private static bool OrderContainsRequiredUnitsTotriggerPromotion(Dictionary<char, int> unitOrderCounter, Dictionary<char, int> requiredunitsToTrigger) =>
             !requiredunitsToTrigger.Select(p => unitOrderCounter.ContainsKey(p.Key) && unitOrderCounter[p.Key] >= p.Value).Contains(false);
