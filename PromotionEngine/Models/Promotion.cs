@@ -1,22 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace PromotionEngine.Models
 {
     public class Promotion
     {
-        public Promotion(bool isActive, decimal price, Dictionary<char, int> requiredUnitsToTrigger)
+        /// <summary>
+        /// For fixed promotions value represents the total price of the promotion. For Percentage promotions value represents the percentage discount. 
+        /// </summary>
+        /// <param name="value">
+        public Promotion(PromotionType type, bool isActive, decimal value, Dictionary<char, int> requiredUnitsToTrigger)
         {
+            Type = type;
             IsActive = isActive;
-            Price = price;
+            Value = value;
             RequiredUnitsToTrigger = requiredUnitsToTrigger;
         }
 
+        public PromotionType Type { get; }
         public bool IsActive { get; set; }
-        public decimal Price { get; set; }
-        public Dictionary<char, int> RequiredUnitsToTrigger { get; set; }
+        public decimal Value { get; }
+        public Dictionary<char, int> RequiredUnitsToTrigger { get; }
     }
 }
